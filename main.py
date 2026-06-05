@@ -14,7 +14,7 @@ app.add_middleware(
 )
 
 app.include_router(db_router, prefix="/api")
-app.include_router(hydrology_router)
+app.include_router(hydrology_router, prefix="/api")
 
 @app.get("/")
 def health_check():
