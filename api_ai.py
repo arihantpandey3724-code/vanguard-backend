@@ -11,6 +11,8 @@ load_dotenv()
 router = APIRouter()
 
 api_key = os.getenv("GEMINI_API_KEY")
+if not api_key:
+    print("[WARNING]: GEMINI_API_KEY is missing from environment variables.")
 genai.configure(api_key=api_key)
 
 model = genai.GenerativeModel('gemini-1.5-flash')
@@ -83,15 +85,14 @@ async def verify_text_endpoint(payload: VerifyRequest):
 
 def _execute_chat_generation(request: ChatRequest, config: genai.types.GenerationConfig) -> str:
     """Helper function to execute synchronous API calls within the worker thread pool."""
+    
     system_instructions = f"""
     You are a localized climate defense AI survival assistant operating in India.
     Target region/context: {request.local_context}
-    Vulnerable demographic: {request.vulnerable_group}
     
     CRITICAL RULES:
-    1. Respond entirely in this language: {request.language}. No mixed scripting or words from other languages.
-    2. Maximum length: Exactly 3 sentences. Be direct, punchy, and actionable.
-    3. Focus strictly on physical survival, heat defense, hazard protocols, or community water preservation.
+    1. Maximum length: Exactly 3 sentences. Be direct, punchy, and actionable.
+    2. Focus strictly on physical survival, heat defense, hazard protocols, or community water preservation.
     """
     full_prompt = f"{system_instructions}\n\nUser Query: {request.user_query}"
     response = model.generate_content(full_prompt, generation_config=config)
@@ -107,7 +108,7 @@ def _execute_chat_generation(request: ChatRequest, config: genai.types.Generatio
 async def chat_with_ai(request: ChatRequest):
     """
     Frontend endpoint for the client-side survival chatbot widget.
-    Processes language toggles and group vulnerability metrics asynchronously.
+    Processes queries based purely on local context asynchronously.
     """
     try:
         chat_config = genai.types.GenerationConfig(
@@ -133,13 +134,8 @@ async def chat_with_ai(request: ChatRequest):
         
     except Exception as e:
         print(f"[CHAT AI ERROR]: {str(e)}")
-        fallback_messages = {
-            "hindi": "एआई वर्तमान में भारी डेटा का विश्लेषण कर रहा है। कृपया हाइड्रेटेड रहें, सुरक्षित स्थान पर शरण लें और थोड़ी देर बाद पुनः प्रयास करें।",
-            "english": "The AI is currently analyzing high volumes of localized data. Please stay hydrated, seek shelter in cooler zones, and retry shortly."
-        }
-        lang = getattr(request, 'language', None)
-        chosen_language = lang.lower() if lang else "english"
+
         return {
-            "ai_response": fallback_messages.get(chosen_language, fallback_messages["english"]),
+            "ai_response": "The AI is currently analyzing high volumes of localized data. Please stay hydrated, seek shelter in cooler zones, and retry shortly.",
             "confidence_flag": "error"
         }
