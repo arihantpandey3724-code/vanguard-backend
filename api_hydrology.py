@@ -14,8 +14,11 @@ BASE_DIR = Path(__file__).resolve().parent
 REGIONS_FILE = BASE_DIR / "shared" / "regions.json"
 FALLBACK_FILE = BASE_DIR / "cache" / "fallback_data.json"
 
-with open(REGIONS_FILE, "r") as f:
-    REGIONS_DATA = json.load(f)
+try:
+    with open(REGIONS_FILE, "r") as f:
+        REGIONS_DATA = json.load(f)
+except FileNotFoundError:
+    REGIONS_DATA = {} 
 
 geolocator = Nominatim(user_agent="vanguard_earth_hydrology")
 

@@ -18,7 +18,7 @@ if not api_key:
 
 client = OpenAI(
     api_key=api_key,
-    base_url="https://api.x.ai/v1",
+    base_url="https://api.groq.com/openai/v1",
 )
 
 def verify_text_logic(text_to_check: str) -> dict:
@@ -42,7 +42,7 @@ def verify_text_logic(text_to_check: str) -> dict:
         
 
         response = client.chat.completions.create(
-            model="grok-2",
+            model="llama-3.3-70b-versatile",
             messages=[
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": f"INPUT TEXT TO EVALUATE:\n---\n{text_to_check}\n---"}
@@ -82,60 +82,3 @@ async def verify_text_endpoint(payload: VerifyRequest):
     loop = asyncio.get_running_loop()
     return await loop.run_in_executor(None, verify_text_logic, payload.text_to_check)
 
-
-def _execute_chat_generation(request: ChatRequest) -> str:
-    """Helper function to execute synchronous API calls within the worker thread pool."""
-    
-    system_instructions = f"""
-    You are a localized climate defense AI survival assistant operating in India.
-    Target region/context: {request.local_context}
-    
-    CRITICAL RULES:
-    1. Maximum length: Exactly 3 sentences. Be direct, punchy, and actionable.
-    2. Focus strictly on physical survival, heat defense, hazard protocols, or community water preservation.
-    """
-    
-    try:
-        response = client.chat.completions.create(
-            model="grok-2",
-            messages=[
-                {"role": "system", "content": system_instructions},
-                {"role": "user", "content": request.user_query}
-            ],
-            max_tokens=150,
-            temperature=0.3
-        )
-        return response.choices[0].message.content.strip()
-        
-    except Exception as e:
-        print(f"[WARNING]: Grok API internal block or failure: {str(e)}")
-        return ""
-
-
-@router.post("/chat")
-async def chat_with_ai(request: ChatRequest):
-    """
-    Frontend endpoint for the client-side survival chatbot widget.
-    """
-    try:
-        loop = asyncio.get_running_loop()
-        ai_reply = await loop.run_in_executor(
-            None, 
-            _execute_chat_generation, 
-            request
-        )
-        
-        if not ai_reply:
-            raise ValueError("Empty generation block returned from Grok.")
-            
-        return {
-            "ai_response": ai_reply,
-            "confidence_flag": "safe"
-        }
-        
-    except Exception as e:
-        print(f"[CHAT AI ERROR]: {str(e)}")
-        return {
-            "ai_response": "The AI is currently analyzing high volumes of localized data. Please stay hydrated, seek shelter in cooler zones, and retry shortly.",
-            "confidence_flag": "error"
-        }

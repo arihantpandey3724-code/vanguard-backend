@@ -1,4 +1,5 @@
 from pydantic import BaseModel, Field
+from typing import Optional
 
 # CONTRACT 1
 class LocationRequest(BaseModel):
@@ -17,7 +18,7 @@ class VerifyRequest(BaseModel):
 # CONTRACT 4
 class StorySubmission(BaseModel):
     author_name: str = Field(..., min_length=1)
-    latitude: float
-    longitude: float
+    latitude: Optional[float] = None # Allow nulls
+    longitude: Optional[float] = None # Allow nulls
     location: str = Field(..., min_length=1)
     story_text: str = Field(..., min_length=20, max_length=500)
