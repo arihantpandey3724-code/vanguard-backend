@@ -1,15 +1,25 @@
-﻿# Python caches
-__pycache__/
-*.pyc
+﻿# Environments
+.env
+.venv
+env/
+venv/
+ENV/
 
-# OS generated files
+# Credentials
+firebase-service-account.json
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# OS
 .DS_Store
 Thumbs.db
 
-# Virtual environments
-venv/
-env/
+*.pyc
 
-# Secrets and keys (NEVER UPLOAD THESE TO GITHUB)
-.env
-firebase-service-account.json
+
+
+

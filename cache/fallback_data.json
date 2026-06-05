@@ -1,0 +1,27 @@
+{
+  "status": "CRITICAL",
+  "habitability_score": 18,
+  "metrics": {
+    "current_wet_bulb_celsius": 34.2,
+    "aquifer_depletion_rate_meters_yr": 3.5
+  },
+  "domino_effect": {
+    "crop_yield_loss_percent": 38,
+    "migration_pressure_score": 74,
+    "water_stress_index": 81
+  },
+  "timeline": {
+    "collapse_year": 2042
+  },
+  "prevention_blueprints": [
+    "Deep Recharges",
+    "Canopy Cooling",
+    "Watershed Restoration",
+    "Solar Microgrids"
+  ],
+  "migration_pipeline": {
+    "safe_zone_target": "Elevated Inland Corridor",
+    "distance_km": 420,
+    "destination_utility_surge_percent": 14.5
+  }
+}
