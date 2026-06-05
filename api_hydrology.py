@@ -33,6 +33,9 @@ def get_state_from_coords(lat: float, lon: float) -> str:
             state = location.raw["address"].get("state", "")
             if state in REGIONS_DATA:
                 return state
+            for known_state in REGIONS_DATA.keys():
+                if known_state in state or state in known_state:
+                    return known_state
     except (GeocoderTimedOut, GeocoderServiceError, Exception):
         pass
     return "default"
