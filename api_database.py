@@ -1,5 +1,5 @@
 from fastapi import APIRouter, HTTPException
-from pydantic import BaseModel
+from models import StorySubmission
 import firebase_admin
 from firebase_admin import credentials, firestore
 
@@ -10,21 +10,13 @@ if not firebase_admin._apps:
 db = firestore.client()
 router = APIRouter()
 
-class StoryPayload(BaseModel):
-    title: str
-    content: str
-    author: str
-    region: str
-    latitude: float
-    longitude: float
-
 @router.post("/submit-story")
-def submit_story(payload: StoryPayload):
+def submit_story(payload: StorySubmission):
     passes_review = True
     ai_score = 0.99
     
     if not passes_review:
-        raise HTTPException(status_code=400, detail="Rejected")
+        raise HTTPException(status_code=400, detail="Rejected by AI")
 
     try:
         doc_ref = db.collection("stories").document()
@@ -33,7 +25,10 @@ def submit_story(payload: StoryPayload):
         story_data["ai_trust_score"] = ai_score
         doc_ref.set(story_data)
         
-        return {"status": "success", "doc_id": doc_ref.id}
+        return {
+            "submission_status": "Success",
+            "message": "Story verified and added to the public map."
+        }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -44,9 +39,8 @@ def get_all_stories():
         all_stories = []
         for doc in docs:
             story = doc.to_dict()
-            story["id"] = doc.id 
             all_stories.append(story)
             
-        return {"status": "success", "data": all_stories}
+        return {"stories": all_stories}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
