@@ -39,6 +39,7 @@ def get_all_stories():
         all_stories = []
         for doc in docs:
             story = doc.to_dict()
+            story["id"] = doc.id
             all_stories.append(story)
             
         return {"stories": all_stories}
