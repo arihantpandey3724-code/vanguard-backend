@@ -13,7 +13,7 @@ router = APIRouter()
 @router.post("/submit-story")
 def submit_story(payload: StorySubmission):
     passes_review = True
-    ai_score = 0.99
+    ai_score = 0.88 
     
     if not passes_review:
         raise HTTPException(status_code=400, detail="Rejected by AI")

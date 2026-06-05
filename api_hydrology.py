@@ -40,7 +40,7 @@ def get_state_from_coords(lat: float, lon: float) -> str:
         pass
     return "default"
 
-@router.post("/api/analyze-location")
+@router.post("/analyze-location")
 async def analyze_location(request: LocationRequest):
     try:
         state_name = get_state_from_coords(request.latitude, request.longitude)
