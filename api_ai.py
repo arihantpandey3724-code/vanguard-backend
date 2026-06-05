@@ -21,7 +21,7 @@ def verify_text_logic(text_to_check: str) -> dict:
     Pure Python function. Imported directly by Person 4 into api_database.py.
     Executes in a synchronous context to handle raw string processing.
     """
-    if not text_to_check or len(text_to_check) < 20:
+    if not text_to_check or len(text_to_check) < 20 or len(text_to_check) > 1000:
         return {"verification_score": 0.00, "passes_review": False}
 
     try:
