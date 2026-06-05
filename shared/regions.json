@@ -1,0 +1,29 @@
+{
+  "Punjab": {
+    "aquifer_depletion_rate_meters_yr": 3.5
+  },
+  "Haryana": {
+    "aquifer_depletion_rate_meters_yr": 3.0
+  },
+  "Rajasthan": {
+    "aquifer_depletion_rate_meters_yr": 2.8
+  },
+  "Delhi": {
+    "aquifer_depletion_rate_meters_yr": 2.5
+  },
+  "Uttar Pradesh": {
+    "aquifer_depletion_rate_meters_yr": 2.0
+  },
+  "Maharashtra": {
+    "aquifer_depletion_rate_meters_yr": 1.5
+  },
+  "Karnataka": {
+    "aquifer_depletion_rate_meters_yr": 1.2
+  },
+  "Kerala": {
+    "aquifer_depletion_rate_meters_yr": 0.5
+  },
+  "default": {
+    "aquifer_depletion_rate_meters_yr": 1.0
+  }
+}
