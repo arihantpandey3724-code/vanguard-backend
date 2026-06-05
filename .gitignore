@@ -1,20 +1,16 @@
-﻿# Environments
-.env
+﻿.env
 .venv
 env/
 venv/
 ENV/
 
-# Credentials
 firebase-service-account.json
-firebase-service-account.json
-# Python
+
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
 
-# OS
 .DS_Store
 Thumbs.db
 

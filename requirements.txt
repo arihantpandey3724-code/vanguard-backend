@@ -3,15 +3,11 @@ fastapi
 uvicorn
 pydantic
 
-# Environment Variables
 python-dotenv
 
-# HTTP Client (For Open-Meteo calls by Person 1)
 httpx
 
-# Geocoding (For state detection by Person 1)
 geopy
 
-# AI & Database (For Persons 3 & 4)
 google-generativeai
 firebase-admin
