@@ -137,7 +137,8 @@ async def chat_with_ai(request: ChatRequest):
             "hindi": "एआई वर्तमान में भारी डेटा का विश्लेषण कर रहा है। कृपया हाइड्रेटेड रहें, सुरक्षित स्थान पर शरण लें और थोड़ी देर बाद पुनः प्रयास करें।",
             "english": "The AI is currently analyzing high volumes of localized data. Please stay hydrated, seek shelter in cooler zones, and retry shortly."
         }
-        chosen_language = request.language.lower() if request.language else "english"
+        lang = getattr(request, 'language', None)
+        chosen_language = lang.lower() if lang else "english"
         return {
             "ai_response": fallback_messages.get(chosen_language, fallback_messages["english"]),
             "confidence_flag": "error"
