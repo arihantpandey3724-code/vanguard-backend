@@ -1,8 +1,20 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from api_database import router as db_router
+from api_hydrology import router as hydrology_router
 
 app = FastAPI(title="Vanguard Earth API")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 app.include_router(db_router, prefix="/api")
+app.include_router(hydrology_router)
 
 @app.get("/")
 def health_check():
