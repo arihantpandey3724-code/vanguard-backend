@@ -42,7 +42,7 @@ def verify_text_logic(text_to_check: str) -> dict:
         
 
         response = client.chat.completions.create(
-            model="grok-beta",
+            model="grok-2",
             messages=[
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": f"INPUT TEXT TO EVALUATE:\n---\n{text_to_check}\n---"}
@@ -66,7 +66,7 @@ def verify_text_logic(text_to_check: str) -> dict:
         
         return {
             "verification_score": final_score,
-            "passes_review": final_score > 0.75
+            "passes_review": final_score > 0.50
         }
         
     except Exception as e:
@@ -74,7 +74,7 @@ def verify_text_logic(text_to_check: str) -> dict:
         return {"verification_score": -1.00, "passes_review": False, "error": True}
 
 
-@router.post("/api/verify-text")
+@router.post("/verify-text")
 async def verify_text_endpoint(payload: VerifyRequest):
     """
     Exposes verification utility as an async REST endpoint.
@@ -97,7 +97,7 @@ def _execute_chat_generation(request: ChatRequest) -> str:
     
     try:
         response = client.chat.completions.create(
-            model="grok-beta",
+            model="grok-2",
             messages=[
                 {"role": "system", "content": system_instructions},
                 {"role": "user", "content": request.user_query}
@@ -112,7 +112,7 @@ def _execute_chat_generation(request: ChatRequest) -> str:
         return ""
 
 
-@router.post("/api/chat")
+@router.post("/chat")
 async def chat_with_ai(request: ChatRequest):
     """
     Frontend endpoint for the client-side survival chatbot widget.
