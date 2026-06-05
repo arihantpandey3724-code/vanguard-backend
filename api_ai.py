@@ -3,7 +3,10 @@ import re
 import asyncio
 import google.generativeai as genai
 from fastapi import APIRouter
+from dotenv import load_dotenv
 from models import ChatRequest, VerifyRequest
+
+load_dotenv()
 
 router = APIRouter()
 
@@ -11,6 +14,7 @@ api_key = os.getenv("GEMINI_API_KEY")
 genai.configure(api_key=api_key)
 
 model = genai.GenerativeModel('gemini-1.5-flash')
+
 
 def verify_text_logic(text_to_check: str) -> dict:
     """
@@ -21,7 +25,6 @@ def verify_text_logic(text_to_check: str) -> dict:
         return {"verification_score": 0.00, "passes_review": False}
 
     try:
-
         generation_config = genai.types.GenerationConfig(
             max_output_tokens=10,
             temperature=0.0
@@ -42,15 +45,18 @@ def verify_text_logic(text_to_check: str) -> dict:
         """
         
         response = model.generate_content(verification_prompt, generation_config=generation_config)
-        response_text = response.text.strip() if response.text else "0.00"
         
+        try:
+            response_text = response.text.strip()
+        except ValueError:
+            print("[WARNING]: Gemini Safety Filter blocked verification request.")
+            response_text = "0.00"
 
         all_numbers = re.findall(r"\d*\.\d+|\d+", response_text)
         
         if not all_numbers:
             return {"verification_score": 0.00, "passes_review": False}
             
-
         raw_score = float(all_numbers[-1])
         clamped_score = max(0.0, min(1.0, raw_score))
         final_score = round(clamped_score, 2)
@@ -62,9 +68,7 @@ def verify_text_logic(text_to_check: str) -> dict:
         
     except Exception as e:
         print(f"[SYSTEM CRITICAL ERROR IN AI SERVICE]: {str(e)}")
-
         return {"verification_score": -1.00, "passes_review": False, "error": True}
-
 
 
 @router.post("/api/verify-text")
@@ -91,7 +95,12 @@ def _execute_chat_generation(request: ChatRequest, config: genai.types.Generatio
     """
     full_prompt = f"{system_instructions}\n\nUser Query: {request.user_query}"
     response = model.generate_content(full_prompt, generation_config=config)
-    return response.text.strip() if response.text else ""
+    
+    try:
+        return response.text.strip()
+    except ValueError:
+        print("[WARNING]: Gemini Safety Filter blocked chat response.")
+        return ""
 
 
 @router.post("/api/chat")
