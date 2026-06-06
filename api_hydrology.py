@@ -68,11 +68,9 @@ async def analyze_location(request: LocationRequest):
         crop_loss = int(water_stress * 0.4)
         migration_pressure = int(water_stress * 0.8)
         
-        # --- NEW HIGH URGENCY MATH (POWER CURVE) ---
-        # Critical zones collapse in ~3-5 years. The safest zones last ~70 years.
         years_remaining = 3 + math.pow((habitability / 12), 2)
         collapse_yr = 2025 + int(years_remaining)
-        # -------------------------------------------
+        
 
         if habitability < 30:
             status = "CRITICAL"
