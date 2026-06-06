@@ -63,11 +63,25 @@ async def analyze_location(request: LocationRequest):
         
         raw_stress = ((wet_bulb - 25) * 5) + (depletion_rate * 8)
         water_stress = max(0, min(100, int(raw_stress)))
-        
+
         habitability = 100 - water_stress
         crop_loss = int(water_stress * 0.4)
         migration_pressure = int(water_stress * 0.8)
         
+        
+        decadal_projection = []
+        current_habitability = float(habitability)
+
+        for decade in range(0, 5): # 0, 10, 20, 30, 40 years
+            # Habitability decays based on the aquifer depletion rate impact
+            # We use a decay factor: depletion_rate * 2.5% per decade
+            decay = (depletion_rate * 2.5) * decade
+            projected_score = max(0, current_habitability - decay)
+            decadal_projection.append({
+                "decade": f"{decade * 10}y",
+                "score": round(projected_score, 1)
+            })
+
         years_remaining = 3 + math.pow((habitability / 12), 2)
         collapse_yr = 2025 + int(years_remaining)
         
@@ -102,7 +116,8 @@ async def analyze_location(request: LocationRequest):
                 "water_stress_index": water_stress
             },
             "timeline": {
-                "collapse_year": collapse_yr
+                "collapse_year": collapse_yr,
+                "decadal_trend": decadal_projection
             },
             "prevention_blueprints": blueprints,
             "migration_pipeline": {
